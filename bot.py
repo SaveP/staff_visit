@@ -3,7 +3,7 @@ import logging
 from aiogram import Dispatcher
 
 from bot_ini import bot
-from hendlers import start, mainMenu, selectPersons, direct, report_file
+from hendlers import start, mainMenu, selectPersons, direct, report_file, other
 
 # Запуск процесса поллинга новых апдейтов
 async def main():
@@ -14,7 +14,8 @@ async def main():
     dp = Dispatcher()
 
     # Регистрируем роутеры для срабатывания хендлеров
-    dp.include_routers(start.router, mainMenu.router, selectPersons.router, direct.router, report_file.router)
+    dp.include_routers(start.router, mainMenu.router, selectPersons.router, direct.router,
+                       report_file.router, other.router)
 
     # Запускаем бота и пропускаем все накопленные входящие
     await bot.delete_webhook(drop_pending_updates=True)
