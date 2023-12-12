@@ -14,7 +14,8 @@ cur.execute("""CREATE TABLE IF NOT EXISTS users(
                 telegram_id INTEGER,
                 selectedPersonsID TEXT,
                 selectedDirect TEXT,
-                timeEnter_mode TEXT DEFAULT "disable"
+                timeEnter_mode TEXT DEFAULT "disable",
+                enter_time TEXT DEFAULT ":"
                 )""")
 
 con.commit()
@@ -98,9 +99,46 @@ def get_selectedDirect(telID: int):
 
     return dir
 
+
 def set_selectedDirect(telID: int, dir: str):
     with sq.connect('staffBotDb.db') as con:
         cur = con.cursor()
 
     cur.execute("UPDATE users SET selectedDirect = ? WHERE telegram_id = ?", (dir, telID))
+    con.commit()
+
+
+def set_TimeEnterMode(telID: int, mode: str):
+    with sq.connect('staffBotDb.db') as con:
+        cur = con.cursor()
+
+    cur.execute("UPDATE users SET timeEnter_mode = ? WHERE telegram_id = ?", (mode, telID))
+    con.commit()
+
+
+def get_TimeEnterMode(telID: int):
+    with sq.connect('staffBotDb.db') as con:
+        cur = con.cursor()
+
+    cur.execute(f'SELECT users.timeEnter_mode FROM users WHERE telegram_id = {telID}')
+    mode = cur.fetchone()[0]
+    con.commit()
+    return mode
+
+
+def get_enter_time(telID: int):
+    with sq.connect('staffBotDb.db') as con:
+        cur = con.cursor()
+
+    cur.execute(f'SELECT users.enter_time FROM users WHERE telegram_id = {telID}')
+    time = cur.fetchone()[0]
+    con.commit()
+    return time
+
+
+def set_enter_time(telID: int, time: str):
+    with sq.connect('staffBotDb.db') as con:
+        cur = con.cursor()
+
+    cur.execute("UPDATE users SET enter_time = ? WHERE telegram_id = ?", (time, telID))
     con.commit()

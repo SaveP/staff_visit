@@ -6,7 +6,6 @@ from keyboards import mainMenu
 
 router = Router()
 
-
 # Обработчик текстовых сообщений
 @router.message(F.text)
 async def on_text_message(message: Message):

@@ -19,7 +19,7 @@ async def callback_selectPersona(callback: types.CallbackQuery):
         else:
             await callback.message.edit_text(
                 "Выберите действие:",
-                reply_markup=otherKeyboards.selectDirect()
+                reply_markup=otherKeyboards.selectDirect(callback.from_user.id)
             )
             return
 
