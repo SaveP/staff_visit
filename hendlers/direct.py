@@ -126,7 +126,7 @@ async def callback_select_direct(callback: types.CallbackQuery):
         await mainMenu.callMainMenuAnswer(callback)
         return
 
-    # Обработка нажатия кнопки 'Вход' при ручном выборе времени
+    # Обработка нажатия кнопки 'Выход' при ручном выборе времени
     if (dir == 'exit') and (stateInfo.get_enter_time_mod(callback.from_user.id) == 'enable'):
         sel_time = stateInfo.get_enter_time(callback.from_user.id)
         entered_time = get_last_date(sel_time)
