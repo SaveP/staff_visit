@@ -41,7 +41,7 @@ def selectDirect(tel_id: int):
             sel = ''
             if stateInfo.get_enter_time(tel_id, 'm') == str(i):
                 sel = '✅'
-            keyboardBuilder.button(text=f'{sel}{str(i)}:', callback_data=f'time_min_{i}')
+            keyboardBuilder.button(text=f'{sel}:{str(i)}', callback_data=f'time_min_{i}')
 
         keyboardBuilder.button(text='Отмена ❌️', callback_data='direct_Cancel')
 

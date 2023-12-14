@@ -1,4 +1,4 @@
-import sqlite3 as sq
+'''import sqlite3 as sq
 
 with sq.connect("staffBotDb.db") as con:
     cur = con.cursor()
@@ -6,3 +6,4 @@ with sq.connect("staffBotDb.db") as con:
 cur.execute('ALTER TABLE users ADD COLUMN enter_time TEXT')
 
 con.commit()
+'''
