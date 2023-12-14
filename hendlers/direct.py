@@ -101,7 +101,7 @@ async def callback_select_direct(callback: types.CallbackQuery):
 
 
     # Обработка нажатия кнопки 'Выход'
-    if dir == 'exit':
+    if (dir == 'exit') and (stateInfo.get_enter_time_mod(callback.from_user.id) == 'disable'):
         named_tuple = time.localtime()  # получить struct_time
         local_time = time.strftime("%H:%M %d/%m/%Y", named_tuple)
         names = " ".join(personalList.getNames(stateInfo.getSelectedPersonal(callback.from_user.id)))
@@ -154,5 +154,6 @@ async def callback_select_direct(callback: types.CallbackQuery):
 
     # Обработка нажатия кнопки 'Cancel'
     if dir == 'Cancel':
+        stateInfo.resetData(callback.from_user.id)
         await mainMenu.callMainMenu(callback)
         return
