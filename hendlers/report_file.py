@@ -12,3 +12,11 @@ async def cmd_start(message: types.Message):
     file_path = 'report.xlsx'
     file = FSInputFile(file_path, filename=file_path)
     await message.answer_document(file)
+
+
+@router.message(Command("getfullreport"))
+async def cmd_start(message: types.Message):
+    db_to_exel.create_full_report_to_xlsx()
+    file_path = 'fullreport.xlsx'
+    file = FSInputFile(file_path, filename=file_path)
+    await message.answer_document(file)
