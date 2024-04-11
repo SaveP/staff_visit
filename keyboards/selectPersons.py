@@ -19,6 +19,7 @@ def selectPersonKb(telegramId):
 
         keyboardBuilder.button(text=iconSel + per['Name'], callback_data='selectPersona_%s' % per['ID'])
 
+
     # Групируем кнопки по 2 в ряд
     keyboardBuilder.adjust(2, repeat=True)
 
