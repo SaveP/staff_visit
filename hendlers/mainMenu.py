@@ -27,6 +27,16 @@ async def callMainMenuAnswer(callback: types.CallbackQuery):
 @router.callback_query(F.data.startswith("main"))
 async def callback_main(callback: types.CallbackQuery):
     action = callback.data.split("_")[1]
+    place = ''
+    try:
+        place = callback.data.split("_")[2]
+        if place == 'FP':
+            place = 'ФП'
+        elif place == 'ATI':
+            place = 'АТИ'
+    except:
+        pass
+
 
     if action == "entry":
         eventInfo = dict()
@@ -37,7 +47,9 @@ async def callback_main(callback: types.CallbackQuery):
         if name == '':
             name = callback.from_user.username
 
-        msg_for_chat = "Вход {} \n {}".format(local_time, name)
+
+
+        msg_for_chat = "Вход {} {} \n {}".format(place, local_time, name)
 
         eventInfo.update({'TelID': callback.from_user.id,
                           'senderName': callback.from_user.username,
@@ -49,7 +61,7 @@ async def callback_main(callback: types.CallbackQuery):
         db_history.addEntry(eventInfo['TelID'], eventInfo['senderName'], eventInfo['employee_name'],
                             eventInfo['direct'], eventInfo['time'])
 
-        await send_message_to_chat(msg_for_chat)
+        await send_message_to_chat(msg_for_chat, )
         await callback.message.edit_text(msg_for_chat)
         await callback.message.answer(
             "Выберите дествие:",
@@ -65,7 +77,7 @@ async def callback_main(callback: types.CallbackQuery):
         if name == '':
             name = callback.from_user.username
 
-        msg_for_chat = "Выход {} \n {}".format(local_time, name)
+        msg_for_chat = "Выход {} {} \n {}".format(place, local_time, name)
 
         eventInfo.update({'TelID': callback.from_user.id,
                           'senderName': callback.from_user.username,

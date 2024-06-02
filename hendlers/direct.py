@@ -8,6 +8,7 @@ from hendlers import mainMenu
 from data_base import db_history
 import stateInfo, personalList
 
+
 #Функция принимает время в формате строки "%H:%M" и возвращает дату когда последний раз было это время
 def get_last_date(time: str):
     time_now = datetime.datetime.now()
@@ -31,6 +32,15 @@ async def callback_select_direct(callback: types.CallbackQuery):
 
 
     dir = callback.data.split("_")[1]
+    place = ''
+    try:
+        place = callback.data.split("_")[2]
+        if place == 'FP':
+            place = 'ФП'
+        elif place == 'ATI':
+            place = 'АТИ'
+    except:
+        pass
     # Обработка нажатия кнопки с часиками
     if dir == 'timeEnter':
         stateInfo.change_enter_time_mod(callback.from_user.id)
@@ -49,7 +59,7 @@ async def callback_select_direct(callback: types.CallbackQuery):
         named_tuple = time.localtime()  # получить struct_time
         local_time = time.strftime("%H:%M %d/%m/%Y", named_tuple)
         names = " ".join(personalList.getNames(stateInfo.getSelectedPersonal(callback.from_user.id)))
-        msg_for_chat = "Вход {} \n {}".format(local_time, names)
+        msg_for_chat = "Вход {} {} \n {}".format(place, local_time, names)
 
 
         selectedEmployees = personalList.getNames(stateInfo.getSelectedPersonal(callback.from_user.id))
@@ -78,7 +88,7 @@ async def callback_select_direct(callback: types.CallbackQuery):
 
         entered_time = get_last_date(sel_time)
         names = " ".join(personalList.getNames(stateInfo.getSelectedPersonal(callback.from_user.id)))
-        msg_for_chat = "Вход {} \n {}".format(entered_time, names)
+        msg_for_chat = "Вход {} {} \n {}".format(place, entered_time, names)
 
         selectedEmployees = personalList.getNames(stateInfo.getSelectedPersonal(callback.from_user.id))
         for emloyeesName in selectedEmployees:
@@ -105,7 +115,7 @@ async def callback_select_direct(callback: types.CallbackQuery):
         named_tuple = time.localtime()  # получить struct_time
         local_time = time.strftime("%H:%M %d/%m/%Y", named_tuple)
         names = " ".join(personalList.getNames(stateInfo.getSelectedPersonal(callback.from_user.id)))
-        msg_for_chat = "Выход {} \n {}".format(local_time, names)
+        msg_for_chat = "Выход {} {} \n {}".format(place, local_time, names)
 
         selectedEmployees = personalList.getNames(stateInfo.getSelectedPersonal(callback.from_user.id))
         for emloyeesName in selectedEmployees:
@@ -131,7 +141,7 @@ async def callback_select_direct(callback: types.CallbackQuery):
         sel_time = stateInfo.get_enter_time(callback.from_user.id)
         entered_time = get_last_date(sel_time)
         names = " ".join(personalList.getNames(stateInfo.getSelectedPersonal(callback.from_user.id)))
-        msg_for_chat = "Выход {} \n {}".format(entered_time, names)
+        msg_for_chat = "Выход {} {} \n {}".format(place, entered_time, names)
 
         selectedEmployees = personalList.getNames(stateInfo.getSelectedPersonal(callback.from_user.id))
         for emloyeesName in selectedEmployees:
