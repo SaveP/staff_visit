@@ -7,7 +7,7 @@ from data_base import db_usersData
 
 
 # Список где хранится информация о всех пользователях бота
-users = list()
+#users = list()
 
 
 def registrationUser(telegramId: int):

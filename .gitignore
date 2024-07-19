@@ -1,4 +1,5 @@
 /.idea
+tokens.py
 .env
 .mypy_cache/
 .vscode/

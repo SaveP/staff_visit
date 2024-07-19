@@ -20,14 +20,14 @@ cur.execute("""CREATE TABLE IF NOT EXISTS users(
 
 con.commit()
 
-def print_allUsers():
+def get_allUsers():
     with sq.connect('staffBotDb.db') as con:
         cur = con.cursor()
 
     cur.execute('SELECT * FROM users')
     data = cur.fetchall()
     con.commit()
-    print(data)
+    return data
 
 
 def get_userData(telID: int):

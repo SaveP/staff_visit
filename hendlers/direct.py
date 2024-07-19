@@ -30,7 +30,7 @@ router = Router()
 @router.callback_query(F.data.startswith("direct"))
 async def callback_select_direct(callback: types.CallbackQuery):
 
-
+    #Парсинг данных о площадке на которую был совершён вход/выход
     dir = callback.data.split("_")[1]
     place = ''
     try:
@@ -41,6 +41,7 @@ async def callback_select_direct(callback: types.CallbackQuery):
             place = 'АТИ'
     except:
         pass
+
     # Обработка нажатия кнопки с часиками
     if dir == 'timeEnter':
         stateInfo.change_enter_time_mod(callback.from_user.id)

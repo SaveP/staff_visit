@@ -1,5 +1,6 @@
 from aiogram import types, Router
 from aiogram.filters.command import Command
+import broadcast
 
 from keyboards import mainMenu
 
@@ -43,3 +44,12 @@ async def cmd_start(message: types.Message):
         "Выберите дествие:",
         reply_markup=mainMenu.FullMainMenu()
     )'''
+
+@router.message(Command("send_all"))
+async def send_msg_for_all(m: types.Message):
+    try:
+        msg = m.text.split(" ")[1]
+        broadcast.send_message_to_all_users(msg)
+
+    except ValueError:
+        print("Ошибка при вводе команды /send_all")

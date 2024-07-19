@@ -1,12 +1,10 @@
 from aiogram import Bot
+from config import Config, load_config
 
-# For debug
-TOKEN = "6489189653:AAGsrxOBjA0Wy5R444cnwMsSsI-NQjdPMiM"
-CHAT_ID = -1001801502361
 
-# For realise
-#TOKEN = "6627028597:AAHdR3v2MAoGhSehqvsm35hUSWk6bwzA3aE"
-#CHAT_ID = -920858336
+config: Config = load_config()
+TOKEN: str = config.tg_bot.token
+CHAT_ID: str = config.tg_bot.chat_id
 
 # Объект бота
 bot = Bot(token=TOKEN)
