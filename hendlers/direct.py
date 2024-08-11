@@ -5,7 +5,7 @@ import time
 from bot_ini import send_message_to_chat
 from keyboards import otherKeyboards
 from hendlers import mainMenu
-from data_base import db_history
+from data_base import db_history, db_event
 import stateInfo, personalList
 
 
@@ -21,11 +21,6 @@ def get_last_date(time: str):
 
 router = Router()
 
-'''async def callback_kbTime(callback: types.CallbackQuery):
-    await callback.message.edit_text(
-        "Введите время:",
-        reply_markup=otherKeyboards.selectTimeKb()
-    )'''
 
 @router.callback_query(F.data.startswith("direct"))
 async def callback_select_direct(callback: types.CallbackQuery):
@@ -55,113 +50,51 @@ async def callback_select_direct(callback: types.CallbackQuery):
             reply_markup=otherKeyboards.selectDirect(callback.from_user.id)
         )
 
-    # Обработка нажатия кнопки 'Вход' при автоматическом выборе времени
-    if (dir == 'entry') and (stateInfo.get_enter_time_mod(callback.from_user.id) == 'disable'):
-        named_tuple = time.localtime()  # получить struct_time
-        local_time = time.strftime("%H:%M %d/%m/%Y", named_tuple)
-        names = " ".join(personalList.getNames(stateInfo.getSelectedPersonal(callback.from_user.id)))
-        msg_for_chat = "Вход {} {} \n {}".format(place, local_time, names)
 
+    # Обработка нажатия кнопки 'Вход'
+    if dir == 'entry' or dir == 'exit':
+
+        entered_time = ""
+        if stateInfo.get_enter_time_mod(callback.from_user.id) == 'disable':
+            entered_time = time.strftime("%H:%M %d/%m/%Y", time.localtime())
+        elif stateInfo.get_enter_time_mod(callback.from_user.id) == 'enable':
+            sel_time = stateInfo.get_enter_time(callback.from_user.id)
+            entered_time = get_last_date(sel_time)
+
+        names = " ".join(personalList.getNames(stateInfo.getSelectedPersonal(callback.from_user.id)))
+
+        ru_dir = "dir"
+        if dir == 'entry':
+            ru_dir = 'Вход'
+        elif dir == 'exit':
+            ru_dir = 'Выход'
+        msg_for_chat = f"{ru_dir} {place} {entered_time} \n{names}"
 
         selectedEmployees = personalList.getNames(stateInfo.getSelectedPersonal(callback.from_user.id))
+        eventInfo = dict()
+
+
+        ret_msg_grup = await send_message_to_chat(msg_for_chat)
+        ret_msg = await callback.message.edit_text(msg_for_chat)
+        id_event = db_event.add_event(user_id=callback.from_user.id, id_chat=ret_msg.chat.id,
+                                      id_msg_chat=ret_msg.message_id, id_grup=ret_msg_grup.chat.id,
+                                      id_msg_grup=ret_msg_grup.message_id, description=msg_for_chat,
+                                      links="", user_nick=callback.from_user.username, type=dir)
+
         for emloyeesName in selectedEmployees:
-            eventInfo = dict()
+            eventInfo.clear()
             eventInfo.update({'TelID': callback.from_user.id,
                               'senderName': callback.from_user.username,
                               'employee_name': emloyeesName,
-                              'direct': 'entry',
-                              'time': local_time
-                              })
-
-            db_history.addEntry(eventInfo['TelID'], eventInfo['senderName'], eventInfo['employee_name'],
-                                eventInfo['direct'], eventInfo['time'])
-
-        await callback.message.edit_text(msg_for_chat)
-        await send_message_to_chat(msg_for_chat)
-        await mainMenu.callMainMenuAnswer(callback)
-        return
-
-
-    # Обработка нажатия кнопки 'Вход' при ручном выборе времени
-    if (dir == 'entry') and (stateInfo.get_enter_time_mod(callback.from_user.id) == 'enable'):
-
-        sel_time = stateInfo.get_enter_time(callback.from_user.id)
-
-        entered_time = get_last_date(sel_time)
-        names = " ".join(personalList.getNames(stateInfo.getSelectedPersonal(callback.from_user.id)))
-        msg_for_chat = "Вход {} {} \n {}".format(place, entered_time, names)
-
-        selectedEmployees = personalList.getNames(stateInfo.getSelectedPersonal(callback.from_user.id))
-        for emloyeesName in selectedEmployees:
-            eventInfo = dict()
-
-            eventInfo.update({'TelID': callback.from_user.id,
-                              'senderName': callback.from_user.username,
-                              'employee_name': emloyeesName,
-                              'direct': 'entry',
+                              'direct': dir,
                               'time': entered_time
                               })
-
             db_history.addEntry(eventInfo['TelID'], eventInfo['senderName'], eventInfo['employee_name'],
-                                eventInfo['direct'], eventInfo['time'])
+                                eventInfo['direct'], eventInfo['time'], id_event)
 
-        await callback.message.edit_text(msg_for_chat)
-        await send_message_to_chat(msg_for_chat)
         await mainMenu.callMainMenuAnswer(callback)
         return
 
-
-    # Обработка нажатия кнопки 'Выход'
-    if (dir == 'exit') and (stateInfo.get_enter_time_mod(callback.from_user.id) == 'disable'):
-        named_tuple = time.localtime()  # получить struct_time
-        local_time = time.strftime("%H:%M %d/%m/%Y", named_tuple)
-        names = " ".join(personalList.getNames(stateInfo.getSelectedPersonal(callback.from_user.id)))
-        msg_for_chat = "Выход {} {} \n {}".format(place, local_time, names)
-
-        selectedEmployees = personalList.getNames(stateInfo.getSelectedPersonal(callback.from_user.id))
-        for emloyeesName in selectedEmployees:
-            eventInfo = dict()
-
-            eventInfo.update({'TelID': callback.from_user.id,
-                              'senderName': callback.from_user.username,
-                              'employee_name': emloyeesName,
-                              'direct': 'exit',
-                              'time': local_time
-                              })
-
-            db_history.addEntry(eventInfo['TelID'], eventInfo['senderName'], eventInfo['employee_name'],
-                                eventInfo['direct'], eventInfo['time'])
-
-        await callback.message.edit_text(msg_for_chat)
-        await send_message_to_chat(msg_for_chat)
-        await mainMenu.callMainMenuAnswer(callback)
-        return
-
-    # Обработка нажатия кнопки 'Выход' при ручном выборе времени
-    if (dir == 'exit') and (stateInfo.get_enter_time_mod(callback.from_user.id) == 'enable'):
-        sel_time = stateInfo.get_enter_time(callback.from_user.id)
-        entered_time = get_last_date(sel_time)
-        names = " ".join(personalList.getNames(stateInfo.getSelectedPersonal(callback.from_user.id)))
-        msg_for_chat = "Выход {} {} \n {}".format(place, entered_time, names)
-
-        selectedEmployees = personalList.getNames(stateInfo.getSelectedPersonal(callback.from_user.id))
-        for emloyeesName in selectedEmployees:
-            eventInfo = dict()
-
-            eventInfo.update({'TelID': callback.from_user.id,
-                              'senderName': callback.from_user.username,
-                              'employee_name': emloyeesName,
-                              'direct': 'exit',
-                              'time': entered_time
-                              })
-
-            db_history.addEntry(eventInfo['TelID'], eventInfo['senderName'], eventInfo['employee_name'],
-                                eventInfo['direct'], eventInfo['time'])
-
-        await callback.message.edit_text(msg_for_chat)
-        await send_message_to_chat(msg_for_chat)
-        await mainMenu.callMainMenuAnswer(callback)
-        return
 
     # Обработка нажатия кнопки 'Cancel'
     if dir == 'Cancel':

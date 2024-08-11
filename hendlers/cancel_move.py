@@ -22,4 +22,6 @@ async def cancel_move(message: types.Message):
     #Удаляем сообщение из группы
     await delete_msg(event['id_grup'], event['id_msg_grup'])
 
+    #Удаляем сообщение "отмена"
+
     await delete_msg(message.chat.id, message.message_id)

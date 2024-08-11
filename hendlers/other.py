@@ -3,9 +3,6 @@ from aiogram.filters.command import Command
 import broadcast
 
 from keyboards import mainMenu
-from bot_ini import delete_msg
-
-from aiogram import F
 
 router = Router()
 
@@ -37,15 +34,6 @@ async def cmd_start(message: types.Message):
         reply_markup=mainMenu.FullMainMenu()
     )
 
-'''@router.message(Command("message_for_all"))
-async def cmd_start(message: types.Message):
-    msg = message.text
-
-    await message.answer(msg)
-    await message.answer(
-        "Выберите дествие:",
-        reply_markup=mainMenu.FullMainMenu()
-    )'''
 
 @router.message(Command("send_all"))
 async def send_msg_for_all(m: types.Message):
@@ -55,14 +43,3 @@ async def send_msg_for_all(m: types.Message):
 
     except ValueError:
         print("Ошибка при вводе команды /send_all")
-
-
-"""
-@router.message(F.text.lower() == "отмена")
-async def cancel_move(message: types.Message):
-    reply_msg = message.reply_to_message
-
-    delete_msg()
-
-    print('Отмена')
-    print(reply_msg.chat.id, reply_msg.message_id)"""
