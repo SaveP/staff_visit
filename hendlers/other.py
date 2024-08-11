@@ -3,7 +3,9 @@ from aiogram.filters.command import Command
 import broadcast
 
 from keyboards import mainMenu
+from bot_ini import delete_msg
 
+from aiogram import F
 
 router = Router()
 
@@ -53,3 +55,14 @@ async def send_msg_for_all(m: types.Message):
 
     except ValueError:
         print("Ошибка при вводе команды /send_all")
+
+
+"""
+@router.message(F.text.lower() == "отмена")
+async def cancel_move(message: types.Message):
+    reply_msg = message.reply_to_message
+
+    delete_msg()
+
+    print('Отмена')
+    print(reply_msg.chat.id, reply_msg.message_id)"""
